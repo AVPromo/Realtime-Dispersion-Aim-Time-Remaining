@@ -64,8 +64,180 @@ except ImportError:
     g_modsSettingsApi = None
     templates = None
 
+# --- СЛОВАРЬ ЛОКАЛИЗАЦИИ ---
+LOCALIZATION = {
+    'en': {
+        'disable_drag': 'Disable mouse dragging',
+        'show_dispersion': 'Show current accuracy (dispersion line)',
+        'show_aim_time': 'Show remaining aim time (seconds line)',
+        'debug_aim': 'Debug aim logging ([AIM_DEBUG] in python.log, throttled)',
+        'debug_drag': 'Debug drag logging ([DRAG_DEBUG] in python.log, throttled)',
+        'font_size': 'Font size (text size)',
+        'font_name': 'Font (game font preset)',
+        'dec_disp': 'Dispersion decimals (digits after dot)',
+        'dec_aim': 'Aim time decimals (digits after dot)',
+        'line_space': 'Line spacing (gap between the 2 lines)',
+        'hud_interval': 'HUD update interval (seconds; 0 = every frame)',
+        'text_color': 'Text color',
+        'text_alpha': 'Text alpha',
+        'draw_shadow': 'Draw text shadow',
+        'shadow_alpha': 'Text shadow alpha',
+        'sec_suffix': 's',
+        'mod_desc': 'Shows realtime dispersion and aim time remaining near the crosshair.'
+    },
+    'ru': {
+        'disable_drag': 'Отключить перетаскивание мышью',
+        'show_dispersion': 'Показывать текущую точность (строка разброса)',
+        'show_aim_time': 'Показывать оставшееся время сведения (строка секунд)',
+        'debug_aim': 'Логирование сведения ([AIM_DEBUG] в python.log)',
+        'debug_drag': 'Логирование перетаскивания ([DRAG_DEBUG] в python.log)',
+        'font_size': 'Размер шрифта',
+        'font_name': 'Шрифт (пресет игры)',
+        'dec_disp': 'Число знаков после запятой для разброса',
+        'dec_aim': 'Число знаков после запятой для времени сведения',
+        'line_space': 'Расстояние между строками',
+        'hud_interval': 'Интервал обновления HUD (0 = каждый кадр)',
+        'text_color': 'Цвет текста',
+        'text_alpha': 'Прозрачность текста',
+        'draw_shadow': 'Отображать тень текста',
+        'shadow_alpha': 'Прозрачность тени текста',
+        'sec_suffix': 'сек',
+        'mod_desc': 'Показывает разброс в реальном времени и оставшееся время сведения около прицела.'
+    },
+    'uk': {
+        'disable_drag': 'Вимкнути перетягування мишею',
+        'show_dispersion': 'Показувати поточну точність (рядок розкиду)',
+        'show_aim_time': 'Показувати залишок часу зведення (рядок секунд)',
+        'debug_aim': 'Логування зведення ([AIM_DEBUG] у python.log)',
+        'debug_drag': 'Логування перетягування ([DRAG_DEBUG] у python.log)',
+        'font_size': 'Размер шрифту',
+        'font_name': 'Шрифт (пресет гри)',
+        'dec_disp': 'Знаків після коми для розкиду',
+        'dec_aim': 'Знаків після коми для часу зведення',
+        'line_space': 'Відстань між рядками',
+        'hud_interval': 'Інтервал оновлення HUD (0 = кожен кадр)',
+        'text_color': 'Колір тексту',
+        'text_alpha': 'Прозорість тексту',
+        'draw_shadow': 'Відображати тінь тексту',
+        'shadow_alpha': 'Прозорість тіні тексту',
+        'sec_suffix': 'с',
+        'mod_desc': 'Показує розкид у реальному часі та залишок часу зведення біля прицілу.'
+    },
+    'de': {
+        'disable_drag': 'Maus-Ziehen deaktivieren',
+        'show_dispersion': 'Aktuelle Genauigkeit anzeigen (Streuung)',
+        'show_aim_time': 'Restliche Zielzeit anzeigen (Sekunden)',
+        'debug_aim': 'Ziel-Fehlerdiagnose ([AIM_DEBUG] in python.log)',
+        'debug_drag': 'Zieh-Fehlerdiagnose ([DRAG_DEBUG] in python.log)',
+        'font_size': 'Schriftgröße',
+        'font_name': 'Schriftart (Spielvoreinstellung)',
+        'dec_disp': 'Dezimalstellen für Streuung',
+        'dec_aim': 'Dezimalstellen für Zielzeit',
+        'line_space': 'Zeilenabstand',
+        'hud_interval': 'HUD-Aktualisierungsintervall (0 = jeder Frame)',
+        'text_color': 'Textfarbe',
+        'text_alpha': 'Text-Transparenz',
+        'draw_shadow': 'Textschatten anzeigen',
+        'shadow_alpha': 'Schattentransparenz',
+        'sec_suffix': 's',
+        'mod_desc': 'Zeigt die aktuelle Streuung und verbleibende Zielzeit am Fadenkreuz an.'
+    },
+    'pl': {
+        'disable_drag': 'Wyłącz przeciąganie myszą',
+        'show_dispersion': 'Pokaż aktualną celność (linia rozrzutu)',
+        'show_aim_time': 'Pokaż pozostały czas celowania (linia sekund)',
+        'debug_aim': 'Logowanie celowania ([AIM_DEBUG] w python.log)',
+        'debug_drag': 'Logowanie przeciągania ([DRAG_DEBUG] w python.log)',
+        'font_size': 'Rozmiar czcionki',
+        'font_name': 'Czcionka (ustawienie gry)',
+        'dec_disp': 'Miejsca po przecinku dla rozrzutu',
+        'dec_aim': 'Miejsca po przecinku dla czasu celowania',
+        'line_space': 'Odstęp między liniami',
+        'hud_interval': 'Interwał odświeżania HUD (0 = każda klatka)',
+        'text_color': 'Kolor tekstu',
+        'text_alpha': 'Przezroczystość tekstu',
+        'draw_shadow': 'Rysuj cień tekstu',
+        'shadow_alpha': 'Przezroczystość cienia',
+        'sec_suffix': 's',
+        'mod_desc': 'Pokazuje rozrzut w czasie rzeczywistym i pozostały czas celowania obok celownika.'
+    },
+    'fr': {
+        'disable_drag': 'Désactiver le glissement de la souris',
+        'show_dispersion': 'Afficher la précision actuelle (dispersion)',
+        'show_aim_time': 'Afficher le temps de visée restant (secondes)',
+        'debug_aim': 'Journalisation de visée ([AIM_DEBUG] dans python.log)',
+        'debug_drag': 'Journalisation du glissement ([DRAG_DEBUG] dans python.log)',
+        'font_size': 'Taille de police',
+        'font_name': 'Police (préréglage du jeu)',
+        'dec_disp': 'Décimales pour la dispersion',
+        'dec_aim': 'Décimales pour le temps de visée',
+        'line_space': 'Espacement des lignes',
+        'hud_interval': 'Intervalle de mise à jour du HUD (0 = chaque image)',
+        'text_color': 'Couleur du texte',
+        'text_alpha': 'Alpha du texte',
+        'draw_shadow': 'Afficher l\'ombre du texte',
+        'shadow_alpha': 'Alpha de l\'ombre',
+        'sec_suffix': 's',
+        'mod_desc': 'Affiche la dispersion en temps réel et le temps de visée restant près du réticule.'
+    },
+    'cs': {
+        'disable_drag': 'Zakázat tažení myší',
+        'show_dispersion': 'Zobrazit aktuální přesnost (rozptyl)',
+        'show_aim_time': 'Zobrazit zbývající čas zaměření (sekundy)',
+        'debug_aim': 'Logování zaměřování ([AIM_DEBUG] v python.log)',
+        'debug_drag': 'Logování tažení ([DRAG_DEBUG] v python.log)',
+        'font_size': 'Velikost písma',
+        'font_name': 'Písmo (předvolba hry)',
+        'dec_disp': 'Desetinná místa pro rozptyl',
+        'dec_aim': 'Desetinná místa pro čas zaměření',
+        'line_space': 'Rozestup řádků',
+        'hud_interval': 'Interval aktualizace HUD (0 = každý snímek)',
+        'text_color': 'Barva textu',
+        'text_alpha': 'Průhlednost textu',
+        'draw_shadow': 'Zobrazit stín textu',
+        'shadow_alpha': 'Průhlednost stínu',
+        'sec_suffix': 's',
+        'mod_desc': 'Zobrazuje rozptyl v reálném čase a zbývající čas zaměření poblíž zaměřovače.'
+    },
+    'es': {
+        'disable_drag': 'Desactivar arrastre del ratón',
+        'show_dispersion': 'Mostrar precisión actual (dispersión)',
+        'show_aim_time': 'Mostrar tiempo de apuntado restante (segundos)',
+        'debug_aim': 'Depuración de apuntado ([AIM_DEBUG] en python.log)',
+        'debug_drag': 'Depuración de arrastre ([DRAG_DEBUG] en python.log)',
+        'font_size': 'Tamaño de fuente',
+        'font_name': 'Fuente (predeterminada del juego)',
+        'dec_disp': 'Decimales para dispersión',
+        'dec_aim': 'Decimales para tiempo de apuntado',
+        'line_space': 'Espaciado de líneas',
+        'hud_interval': 'Intervalo de actualización de HUD (0 = cada cuadro)',
+        'text_color': 'Color de texto',
+        'text_alpha': 'Alfa del texto',
+        'draw_shadow': 'Dibujar sombra de texto',
+        'shadow_alpha': 'Alfa de la sombra',
+        'sec_suffix': 's',
+        'mod_desc': 'Muestra la dispersión en tiempo real y el tiempo de apuntado restante cerca de la retícula.'
+    }
+}
+
+
+def get_current_lng():
+    try:
+        import helpers
+        lng = helpers.getLanguageCode()
+        if lng in LOCALIZATION:
+            return lng
+    except Exception:
+        pass
+    return 'en'
+
+
+def get_text(key):
+    lng = get_current_lng()
+    return LOCALIZATION[lng].get(key, LOCALIZATION['en'].get(key, ''))
+
+
 def _caphhh_get_dispersion_info(avatar):
-    """Read _PlayerAvatar__dispersionInfo (list of >= 1 element)."""
     if avatar is None:
         return None
     try:
@@ -78,11 +250,6 @@ def _caphhh_get_dispersion_info(avatar):
 
 
 def _caphhh_resolve_aiming_time_seconds(avatar):
-    """
-    aimingTime from __dispersionInfo. Try index [5] first (EU Avatar.py structure:
-    [mult, turretRot, move, rot, afterShot, aimingTime]), then [4] (wotstat / some
-    clients pack it differently). Fallback to gun descriptor.
-    """
     di = _caphhh_get_dispersion_info(avatar)
     if di is not None:
         for idx in (5, 4):
@@ -113,11 +280,6 @@ def _caphhh_resolve_aiming_time_seconds(avatar):
 
 
 def _caphhh_ideal_dispersion(avatar):
-    """
-    Stationary ideal dispersion angle (wotstat-style):
-      vehicleTypeDescriptor.gun.shotDispersionAngle * dispersionInfo[0]
-    dispersionInfo[0] is shotDispMultiplierFactor from updateTargetingInfo.
-    """
     if avatar is None:
         return None
     try:
@@ -179,14 +341,6 @@ def _caphhh_get_additive_dispersion_factor(descr):
 
 
 def _caphhh_get_stationary_ideal_from_result(avatar, dispersion_result, turret_rotation_speed, with_shot):
-    """
-    Reconstruct stationary ideal angle without direct shotDispersionAngle access.
-    Avatar.py formula:
-      idealFactor = mult * sqrt(1 + additiveSqr)
-      result[1] = shotDispersionAngle * idealFactor
-    therefore:
-      stationaryIdeal = result[1] / sqrt(1 + additiveSqr)
-    """
     di = _caphhh_get_dispersion_info(avatar)
     if di is None or len(di) < 5 or dispersion_result is None:
         return None
@@ -227,7 +381,6 @@ def _caphhh_get_stationary_ideal_from_result(avatar, dispersion_result, turret_r
 
 
 def _caphhh_compute_aim_time(aiming_time, current_angles, ideal_angle):
-    """time = aimingTime * ln(current / ideal) for each current angle; return max."""
     if aiming_time <= 0.0 or ideal_angle is None or ideal_angle <= 1e-12:
         return 0.0
     best = 0.0
@@ -258,10 +411,7 @@ AIMING_RUNTIME = {
 _AIMING_DEBUG_LAST_TIME = -9999.0
 _DRAG_DEBUG_LAST_TIME = -9999.0
 
-# Minimum spacing between HUD refreshes; actual value is SETTINGS['display_update_interval'].
 _last_display_update_time = None
-
-# Last values shown on HUD (for repositioning during Ctrl+drag without a fresh dispersion sample).
 _last_hud_dispersion = 0.0
 _last_hud_aim_time = 0.0
 
@@ -314,7 +464,7 @@ def _drag_debug_log(message, force=False):
 
 MOD_ID = 'caphhh.realtimeDispersionAimTimeRemaining'
 MOD_NAME = 'Realtime Dispersion & Aim Time Remaining'
-MOD_VERSION = '1.1.5'
+MOD_VERSION = '1.2.0'
 CONFIG_FOLDER_NAME = 'RealtimeDispersion&AimTimeRemaining'
 CONFIG_RELATIVE_PATH = os.path.join('mods', 'configs', CONFIG_FOLDER_NAME, 'config.json')
 LEGACY_CONFIG_RELATIVE_PATHS = (
@@ -327,11 +477,10 @@ DEFAULT_FONT_CHOICES = (
     'default_large.font',
 )
 
-# Seconds between HUD text updates; 0 = no throttle (every getOwnVehicleShotDispersionAngle call).
 DEFAULT_DISPLAY_UPDATE_INTERVAL = 0.033
 
 DEFAULT_SETTINGS = {
-    'enabled': True,
+    'disable_dragging': False,
     'show_dispersion': True,
     'show_aim_time': True,
     'debug_aim_logging': False,
@@ -348,8 +497,7 @@ DEFAULT_SETTINGS = {
     'offset_y_sniper': 0.0,
     'line_spacing': 0.02,
     'display_update_interval': DEFAULT_DISPLAY_UPDATE_INTERVAL,
-    'color': [235, 248, 255, 255],
-    # Mirrors DistanceMarker-style ModsSettingsAPI: ColorChoice + alpha slider + shadow checkbox.
+    'color': [255, 255, 255, 255],
     'text_color_hex': 'EBF8FF',
     'text_alpha': 1.0,
     'text_shadow': False,
@@ -409,7 +557,6 @@ try:
     INTEGER_TYPES = (int, long)
 except NameError:
     INTEGER_TYPES = (int,)
-
 
 SETTINGS = copy.deepcopy(DEFAULT_SETTINGS)
 SETTINGS_TEMPLATE = None
@@ -491,7 +638,15 @@ def sanitize_settings(raw_settings):
     if isinstance(raw_settings, dict):
         data.update(raw_settings)
 
-    data['enabled'] = _to_bool(data.get('enabled'), DEFAULT_SETTINGS['enabled'])
+    # Автоматически переносим значение из старого "enabled", если новый ключ отсутствует
+    if 'enabled' in raw_keys and 'disable_dragging' not in raw_keys:
+        data['disable_dragging'] = not _to_bool(raw_settings.get('enabled'), True)
+
+    # Принудительно вычищаем "enabled" из текущих рабочих настроек в памяти
+    if 'enabled' in data:
+        del data['enabled']
+
+    data['disable_dragging'] = _to_bool(data.get('disable_dragging'), DEFAULT_SETTINGS['disable_dragging'])
     data['show_dispersion'] = _to_bool(data.get('show_dispersion'), DEFAULT_SETTINGS['show_dispersion'])
     data['show_aim_time'] = _to_bool(data.get('show_aim_time'), DEFAULT_SETTINGS['show_aim_time'])
     data['debug_aim_logging'] = _to_bool(data.get('debug_aim_logging'), DEFAULT_SETTINGS['debug_aim_logging'])
@@ -535,7 +690,6 @@ def sanitize_settings(raw_settings):
                 data['color'][0], data['color'][1], data['color'][2] = rgb
     data['text_color_hex'] = _rgb_tuple_to_hex_upper(data['color'])
 
-    # Keep legacy keys in sync with current mode defaults for backward compatibility.
     data['offset_x'] = data['offset_x_arcade']
     data['offset_y'] = data['offset_y_arcade']
 
@@ -590,7 +744,6 @@ def _get_active_offsets():
 def _set_offsets_for_keys(x_key, y_key, offset_x, offset_y):
     SETTINGS[x_key] = _clamp(_to_float(offset_x, SETTINGS.get(x_key, 0.0)), -0.5, 0.5)
     SETTINGS[y_key] = _clamp(_to_float(offset_y, SETTINGS.get(y_key, 0.0)), -0.5, 0.5)
-    # legacy mirror
     SETTINGS['offset_x'] = SETTINGS[x_key]
     SETTINGS['offset_y'] = SETTINGS[y_key]
 
@@ -643,9 +796,17 @@ def save_config():
     config_path = get_config_path()
     try:
         ensure_config_directory()
+        
+        # Делаем копию настроек перед записью на диск, чтобы не повредить данные в игре
+        clean_settings = copy.deepcopy(SETTINGS)
+        
+        # Принудительно удаляем старый ключ "enabled" из файла json перед сохранением
+        if "enabled" in clean_settings:
+            del clean_settings["enabled"]
+            
         config_file = open(config_path, 'w')
         try:
-            json.dump(SETTINGS, config_file, indent=4, sort_keys=True)
+            json.dump(clean_settings, config_file, indent=4, sort_keys=True)
         finally:
             config_file.close()
     except Exception:
@@ -692,75 +853,13 @@ class CrosshairTextRenderer(object):
         if self._backend_logged:
             return
         self._backend_logged = True
-        screen_width = 1920
-        screen_height = 1080
-        if BigWorld is not None:
-            try:
-                screen_width = max(1, int(BigWorld.screenWidth()))
-                screen_height = max(1, int(BigWorld.screenHeight()))
-            except Exception:
-                pass
-        offset_x, offset_y = _get_active_offsets()
         backend = 'gambiter.guiflash' if self._is_guiflash_ready() else 'GUI.Text'
-        guiflash_ui = None
-        guiflash_cache_size = None
-        if gambiter_flash_module is not None:
-            try:
-                guiflash_ui = getattr(getattr(gambiter_flash_module, 'g_guiViews', None), 'ui', None) is not None
-            except Exception:
-                guiflash_ui = None
-            try:
-                cache = getattr(gambiter_flash_module, 'g_guiCache', None)
-                if cache is not None and hasattr(cache, 'getKeys'):
-                    guiflash_cache_size = len(cache.getKeys())
-            except Exception:
-                guiflash_cache_size = None
-        log('Renderer backend=%s gui=%r guiflash=%r component_type=%r import_error=%r screen=%dx%d offsets=(%.4f, %.4f) line_spacing=%.4f' % (
-            backend,
-            GUI is not None,
-            g_guiFlash is not None,
-            COMPONENT_TYPE is not None,
-            _GUIFLASH_IMPORT_ERROR,
-            screen_width,
-            screen_height,
-            offset_x,
-            offset_y,
-            float(SETTINGS.get('line_spacing', 0.0)),
-        ))
-        log('Renderer backend state guiflash_ui=%r guiflash_cache_size=%r' % (
-            guiflash_ui,
-            guiflash_cache_size,
-        ))
+        log('Renderer backend=%s' % backend)
 
     def _log_first_update_once(self, visible_texts):
         if self._first_update_logged:
             return
         self._first_update_logged = True
-        positions = []
-        line_index = 0
-        for kind, _text in visible_texts:
-            if self._is_guiflash_ready():
-                positions.append((kind, self._pixel_position_for_line(line_index)))
-            else:
-                screen_width = 1920
-                screen_height = 1080
-                if BigWorld is not None:
-                    try:
-                        screen_width = max(1, int(BigWorld.screenWidth()))
-                        screen_height = max(1, int(BigWorld.screenHeight()))
-                    except Exception:
-                        pass
-                offset_x, offset_y = _get_active_offsets()
-                positions.append((kind, (
-                    int((screen_width * 0.5) + (offset_x * screen_width)),
-                    int((screen_height * 0.5) + (offset_y * screen_height) + (SETTINGS['line_spacing'] * screen_height * line_index)),
-                )))
-            line_index += 1
-        log('Renderer first update backend=%s texts=%r positions=%r' % (
-            'gambiter.guiflash' if self._is_guiflash_ready() else 'GUI.Text',
-            [kind for kind, _text in visible_texts],
-            positions,
-        ))
 
     def _color_to_html(self):
         color = SETTINGS['color']
@@ -779,9 +878,8 @@ class CrosshairTextRenderer(object):
             text,
         )
 
+
     def _guiflash_base_props(self, html, x_position, y_position, alpha_override=None, z_index=None):
-        # Gambiter LabelEx applies a default DropShadowFilter on the TextField (gray, blurred),
-        # which reads as a colored halo around white text. Passing shadow=None clears filters.
         props = {
             'text': html,
             'x': x_position,
@@ -825,10 +923,6 @@ class CrosshairTextRenderer(object):
                 g_guiFlash.updateComponent(alias, props, None)
                 return
             except Exception:
-                if not self._guiflash_failure_logged:
-                    self._guiflash_failure_logged = True
-                    log('GUIFlash updateComponent failed alias=%s props=%r' % (alias, props))
-                    LOG_CURRENT_EXCEPTION()
                 try:
                     g_guiFlash.deleteComponent(alias)
                 except Exception:
@@ -838,10 +932,7 @@ class CrosshairTextRenderer(object):
             g_guiFlash.createComponent(alias, COMPONENT_TYPE.LABEL, props)
             self._guiflash_created.add(alias)
         except Exception:
-            if not self._guiflash_failure_logged:
-                self._guiflash_failure_logged = True
-                log('GUIFlash createComponent failed alias=%s props=%r' % (alias, props))
-                LOG_CURRENT_EXCEPTION()
+            pass
 
     def _delete_guiflash_one(self, alias):
         if not self._is_guiflash_ready():
@@ -891,6 +982,7 @@ class CrosshairTextRenderer(object):
     def _delete_guiflash_label(self, alias):
         self._delete_guiflash_one(alias)
         self._delete_guiflash_one(alias + '_shadow')
+
 
     def _create_label(self):
         if self._is_guiflash_ready():
@@ -968,8 +1060,8 @@ class CrosshairTextRenderer(object):
             self._safe_set(label, 'colour', tuple(SETTINGS['color']))
             self._safe_set(label, 'shadow', SETTINGS.get('text_shadow', True))
 
+
     def _hud_label_centers_pixels(self):
-        """Screen pixel centers for each visible line (matches update() layout)."""
         sw = 1920
         sh = 1080
         if BigWorld is not None:
@@ -982,9 +1074,6 @@ class CrosshairTextRenderer(object):
         line_index = 0
         offset_x, offset_y = _get_active_offsets()
         if SETTINGS.get('show_dispersion', True):
-            # Mouse position from GUI.mcursor() is in absolute screen pixels.
-            # Guiflash LabelEx with alignX/alignY='center' also ends up centered on screen with
-            # x/y used as offsets, so hit-test centers must be absolute (center + offset).
             cx = int((sw * 0.5) + (offset_x * sw))
             cy = int((sh * 0.5) + (offset_y * sh) + (SETTINGS['line_spacing'] * sh * line_index))
             centers.append((cx, cy))
@@ -996,20 +1085,17 @@ class CrosshairTextRenderer(object):
         return centers
 
     def is_point_over_hud(self, mx, my):
-        if not SETTINGS.get('enabled', True):
-            return False
         centers = self._hud_label_centers_pixels()
         if not centers:
             return False
         fs = float(SETTINGS.get('font_size', 28))
-        # Generous box: HTML label width varies; guiflash shadow layer extends past main text.
         half_w = max(120.0, fs * 6.5)
         half_h = max(18.0, fs * 0.9)
         if self._is_guiflash_ready():
             half_w *= 1.4
             half_h *= 1.4
-        ys = [c[1] for c in centers]
-        cx = centers[0][0]
+        ys = [c for c in centers]
+        cx = centers
         top = min(ys) - half_h
         bottom = max(ys) + half_h
         left = cx - half_w
@@ -1053,16 +1139,11 @@ class CrosshairTextRenderer(object):
         self.ensure()
         self.apply_settings()
 
-        if not SETTINGS['enabled']:
-            self.hide()
-            return
-
         visible_texts = []
         if SETTINGS['show_dispersion']:
             visible_texts.append(('dispersion', ('%%.%df' % SETTINGS['decimal_dispersion']) % dispersion))
         if SETTINGS['show_aim_time']:
-            visible_texts.append(('aim_time', ('%%.%df' % SETTINGS['decimal_aim_time']) % aim_time_remaining + 's'))
-
+            visible_texts.append(('aim_time', ('%%.%df' % SETTINGS['decimal_aim_time']) % aim_time_remaining + '&nbsp;' + get_text('sec_suffix')))
         if not visible_texts:
             self.hide()
             return
@@ -1096,8 +1177,6 @@ RENDERER = CrosshairTextRenderer()
 
 
 class _HudDragController(object):
-    """Battle-only HUD drag: Ctrl + left mouse on text, same idea as DistanceMarker."""
-
     def __init__(self):
         self._dragging = False
         self._keys_registered = False
@@ -1156,7 +1235,11 @@ class _HudDragController(object):
     def _is_left_pressed(self):
         return self._is_key_down(getattr(Keys, 'KEY_LEFTMOUSE', None))
 
+
     def _begin_drag(self, mx, my, reason, dx, dy):
+        if SETTINGS.get('disable_dragging', False):
+            return
+
         px, py = self._cursor_to_screen_pixels(mx, my)
         self._drag_start_px = px
         self._drag_start_py = py
@@ -1172,21 +1255,10 @@ class _HudDragController(object):
             -0.5, 0.5
         )
         self._dragging = True
-        _drag_debug_log(
-            'drag start by %s raw=(%.2f, %.2f) px=(%.1f, %.1f) dx=%.3f dy=%.3f mode_keys=(%s,%s) start_offset=(%.4f,%.4f)' % (
-                reason, mx, my, px, py, dx, dy,
-                self._drag_offset_x_key, self._drag_offset_y_key,
-                self._drag_start_offset_x, self._drag_start_offset_y
-            ),
-            force=True
-        )
+        _drag_debug_log('drag start')
 
     @staticmethod
     def _cursor_to_screen_pixels(mx, my):
-        """
-        Normalize GUI.mcursor() position to absolute screen pixels.
-        Some clients return clip-space (-1..1), others return pixel coords.
-        """
         if BigWorld is None:
             return float(mx), float(my)
         try:
@@ -1199,14 +1271,12 @@ class _HudDragController(object):
         fy = float(my)
         if -1.5 <= fx <= 1.5 and -1.5 <= fy <= 1.5:
             px = (fx + 1.0) * 0.5 * sw
-            # GUI.mcursor normalized Y is client-dependent; on CN client it behaves as +Y up.
-            # Convert to screen pixels where +Y is down.
             py = (1.0 - fy) * 0.5 * sh
             return px, py
         return fx, fy
 
     def _on_key_down(self, event):
-        if not SETTINGS.get('enabled', True):
+        if SETTINGS.get('disable_dragging', False):
             return
         if not event.isCtrlDown():
             return
@@ -1216,9 +1286,6 @@ class _HudDragController(object):
             cursor = GUI.mcursor()
         except Exception:
             return
-        # Do not require inFocus: with Gambiter/Scaleform the cursor is often "out of focus" for the
-        # main GUI while the battle view still receives mouse — DistanceMarker used inFocus too, but
-        # that blocks drag start on many setups. inWindow is enough.
         if not cursor.inWindow:
             return
         try:
@@ -1227,21 +1294,17 @@ class _HudDragController(object):
             return
         px, py = self._cursor_to_screen_pixels(mx, my)
         if not RENDERER.is_point_over_hud(px, py):
-            _drag_debug_log('keydown miss: ctrl=1 lmb=1 raw=(%.2f, %.2f) px=(%.1f, %.1f)' % (mx, my, px, py))
             return
         self._begin_drag(mx, my, 'keydown(hit)', 0.0, 0.0)
 
     def _on_key_up(self, event):
         if not self._dragging:
             return
-        # Stop dragging either on left mouse release or when CTRL is no longer held.
         if self._is_left_mouse(event):
-            _drag_debug_log('drag end by keyup(lmb)', force=True)
             self.end_drag(save=True)
             return
         try:
             if not event.isCtrlDown():
-                _drag_debug_log('drag end by keyup(ctrl)', force=True)
                 self.end_drag(save=True)
         except Exception:
             pass
@@ -1250,15 +1313,11 @@ class _HudDragController(object):
         if not self._dragging:
             return
         self._dragging = False
-        _drag_debug_log('drag end save=%r offset=(%.4f, %.4f)' % (save, SETTINGS.get('offset_x', 0.0), SETTINGS.get('offset_y', 0.0)), force=True)
         if save:
             try:
                 save_config()
             except Exception:
                 LOG_CURRENT_EXCEPTION()
-            # Do not call apply_runtime_settings() here: it invokes RENDERER.hide(), which deletes
-            # guiflash labels; update_display may be throttled so the HUD stays gone until the next
-            # unthrottled tick — looks like drag broke and blocks further drags.
             global _last_display_update_time
             _last_display_update_time = None
             try:
@@ -1270,41 +1329,33 @@ class _HudDragController(object):
         self._drag_start_py = None
 
     def on_mouse_delta(self, dx, dy):
-        if not SETTINGS.get('enabled', True):
+        if SETTINGS.get('disable_dragging', False):
+            if self._dragging:
+                self.end_drag(save=False)
             return
         if BigWorld is None:
             return
         try:
             cursor = GUI.mcursor()
         except Exception:
-            _drag_debug_log('delta skipped: GUI.mcursor unavailable')
             return
         if not cursor.inWindow:
-            _drag_debug_log('delta skipped: cursor not in window')
             return
 
-        # Fallback path: some clients don't dispatch left-mouse onKeyDown to InputHandler.
-        # In such case we bootstrap drag from continuous mouse delta while Ctrl+LMB is pressed.
         if not self._dragging:
             if not self._is_ctrl_pressed() or not self._is_left_pressed():
                 return
             try:
                 mx, my = cursor.position
             except Exception:
-                _drag_debug_log('delta skipped: cursor.position unavailable')
                 return
             px, py = self._cursor_to_screen_pixels(mx, my)
             if RENDERER.is_point_over_hud(px, py):
                 self._begin_drag(mx, my, 'delta(hit)', dx, dy)
             else:
-                # Compatibility fallback: in some clients cursor/HUD coordinate spaces drift slightly,
-                # making hit-test unreliable. When Ctrl+LMB is physically held and we already receive
-                # battle mouse deltas, allow drag start anyway.
                 self._begin_drag(mx, my, 'delta(fallback-no-hit)', dx, dy)
 
-        # Keep drag only while left mouse is physically held.
         if not self._is_left_pressed():
-            _drag_debug_log('drag end by physical lmb up', force=True)
             self.end_drag(save=True)
             return
 
@@ -1324,13 +1375,9 @@ class _HudDragController(object):
             new_x = self._drag_start_offset_x + (delta_px / float(sw))
             new_y = self._drag_start_offset_y + (delta_py / float(sh))
         except Exception:
-            # Fallback to delta integration when cursor absolute position is unavailable.
             new_x = _to_float(SETTINGS.get(self._drag_offset_x_key, SETTINGS.get('offset_x', 0.0)), 0.0) + (float(dx) / float(sw))
             new_y = _to_float(SETTINGS.get(self._drag_offset_y_key, SETTINGS.get('offset_y', 0.0)), 0.0) + (float(dy) / float(sh))
         _set_offsets_for_keys(self._drag_offset_x_key, self._drag_offset_y_key, new_x, new_y)
-        _drag_debug_log('delta move dx=%.3f dy=%.3f -> offset=(%.4f, %.4f)' % (
-            dx, dy, SETTINGS.get(self._drag_offset_x_key, 0.0), SETTINGS.get(self._drag_offset_y_key, 0.0)
-        ))
         try:
             RENDERER.update(_last_hud_dispersion, _last_hud_aim_time)
         except Exception:
@@ -1430,29 +1477,21 @@ def _clear_own_vehicle_hud():
 
 
 def calculate_aim_time_remaining(avatar, dispersion_result, turret_rotation_speed, with_shot):
-    """
-    Remaining aim time (wotstat-style, all inlined — no external module):
-      ideal = vehicleTypeDescriptor.gun.shotDispersionAngle * dispersionInfo[0]
-      time  = aimingTime * ln(current_dispersion_angle / ideal)
-    """
     if BigWorld is None or avatar is None or dispersion_result is None:
         return 0.0
 
     try:
         vehicle_id = getattr(avatar, 'playerVehicleID', None)
-        ideal = AIMING_RUNTIME['ideal_dispersion']
         aiming_time = AIMING_RUNTIME['aiming_time']
         if AIMING_RUNTIME['vehicle_id'] != vehicle_id or aiming_time <= 0.0:
             aiming_time = _caphhh_resolve_aiming_time_seconds(avatar)
         if aiming_time <= 0.0:
-            _aiming_debug_log('aiming_time<=0 di=%r runtime=%r' % (_caphhh_get_dispersion_info(avatar), AIMING_RUNTIME))
             return 0.0
 
         ideal = _caphhh_get_stationary_ideal_from_result(avatar, dispersion_result, turret_rotation_speed, with_shot)
         if ideal is None or ideal <= 0.0:
             ideal = AIMING_RUNTIME['ideal_dispersion']
         if ideal is None or ideal <= 0.0:
-            _aiming_debug_log('ideal<=0 di=%r runtime=%r' % (_caphhh_get_dispersion_info(avatar), AIMING_RUNTIME))
             return 0.0
 
         r = dispersion_result
@@ -1464,16 +1503,6 @@ def calculate_aim_time_remaining(avatar, dispersion_result, turret_rotation_spee
                 pass
 
         aim_remaining = _caphhh_compute_aim_time(aiming_time, currents, ideal)
-        _aiming_debug_log('di=%r ideal=%r aiming_time=%r currents=%r remain=%r turret=%r with_shot=%r runtime=%r' % (
-            _caphhh_get_dispersion_info(avatar),
-            ideal,
-            aiming_time,
-            currents,
-            aim_remaining,
-            turret_rotation_speed,
-            with_shot,
-            AIMING_RUNTIME
-        ))
         return aim_remaining
     except Exception:
         LOG_CURRENT_EXCEPTION()
@@ -1507,7 +1536,6 @@ def update_display(avatar, dispersion, aim_time_remaining):
 
 
 def _caphhh_positional(args, kwargs, index, name, default=None):
-    """Read a client call argument by position, falling back to its keyword name."""
     if len(args) > index:
         return args[index]
     return kwargs.get(name, default)
@@ -1545,11 +1573,6 @@ def hook_update_vehicle_health(original, self, *args, **kwargs):
 
 
 def hook_update_targeting_info(original, self, *args, **kwargs):
-    # Argument order per wot-src sources/res/scripts/client/Avatar.py:1378 (2.4.0.0):
-    # entityId, turretYaw, gunPitch, maxTurretRotationSpeed, maxGunRotationSpeed,
-    # shotDispMultiplierFactor, gunShotDispersionFactorsTurretRotation,
-    # chassisShotDispersionFactorsMovement, chassisShotDispersionFactorsRotation,
-    # gunShotDispersionFactorsAfterShot, aimingTime
     result = original(self, *args, **kwargs)
     try:
         entityId = _caphhh_positional(args, kwargs, 0, 'entityId')
@@ -1561,15 +1584,9 @@ def hook_update_targeting_info(original, self, *args, **kwargs):
         descr = getattr(self, 'vehicleTypeDescriptor', None)
         gun = getattr(descr, 'gun', None) if descr is not None else None
         if gun is None:
-            _aiming_debug_log('updateTargetingInfo gun=None di=%r entityId=%r playerVehicleID=%r' % (
-                di,
-                entityId,
-                getattr(self, 'playerVehicleID', None)
-            ))
             return result
         base = _caphhh_get_value(gun, 'shotDispersionAngle')
         if base is None:
-            _aiming_debug_log('updateTargetingInfo base=None di=%r gun=%r' % (di, gun))
             return result
         base = float(base)
         mult = None
@@ -1603,15 +1620,6 @@ def hook_update_targeting_info(original, self, *args, **kwargs):
             AIMING_RUNTIME['vehicle_id'] = entityId
             AIMING_RUNTIME['ideal_dispersion'] = base * mult
             AIMING_RUNTIME['aiming_time'] = atime
-        _aiming_debug_log('updateTargetingInfo di=%r base=%r arg_mult=%r arg_aim=%r cached_mult=%r cached_aim=%r runtime=%r' % (
-            di,
-            base,
-            shotDispMultiplierFactor,
-            aimingTime,
-            mult,
-            atime,
-            AIMING_RUNTIME
-        ))
     except Exception:
         LOG_CURRENT_EXCEPTION()
     return result
@@ -1648,13 +1656,6 @@ def hook_destroy(original, self, *args, **kwargs):
 
 
 def _caphhh_mouse_deltas(args, kwargs):
-    """
-    Mouse deltas from an AvatarInputHandler.handleMouseEvent call.
-
-    Client <= 2.3.1: handleMouseEvent(self, dx, dy, dz)
-    Client >= 2.4.0: handleMouseEvent(self, event), deltas on event.dx/.dy/.dz
-                     (wot-src sources/res/scripts/client/AvatarInputHandler/__init__.py:387)
-    """
     if len(args) >= 3:
         raw = args[0], args[1], args[2]
     elif args or 'event' in kwargs:
@@ -1680,12 +1681,8 @@ def hook_avatar_handle_mouse_event(original, self, *args, **kwargs):
     try:
         deltas = _caphhh_mouse_deltas(args, kwargs)
         if deltas is None:
-            _drag_debug_log('handleMouseEvent unknown signature args=%r kwargs=%r' % (args, kwargs))
             return result
         dx, dy, dz = deltas
-        _drag_debug_log('handleMouseEvent dx=%.3f dy=%.3f dz=%.3f dragging=%r ctrl=%r lmb=%r' % (
-            dx, dy, dz, _HUD_DRAG._dragging, _HUD_DRAG._is_ctrl_pressed(), _HUD_DRAG._is_left_pressed()
-        ))
         _HUD_DRAG.on_mouse_delta(dx, dy)
     except Exception:
         LOG_CURRENT_EXCEPTION()
@@ -1721,21 +1718,6 @@ def _try_template_calls(method_name, variants, kwargs=None):
         except Exception:
             continue
     return None
-
-
-def make_slider(title, variable_name, default_value, minimum, maximum, step, tooltip=''):
-    format_string = '%.2f' if step < 1 else '%d'
-    variants = (
-        (title, variable_name, minimum, maximum, default_value, step),
-        (title, variable_name, default_value, minimum, maximum, step),
-        (title, variable_name, minimum, maximum, step, default_value),
-        (title, variable_name, minimum, maximum, default_value),
-    )
-    return _try_template_calls(
-        'createSlider',
-        variants,
-        {'format': format_string, 'tooltip': tooltip}
-    )
 
 
 def _make_option_label(value):
@@ -1799,73 +1781,51 @@ def make_mods_checkbox_dict(title, variable_name, default_value, tooltip=''):
     }
 
 
-def make_stepper(title, variable_name, default_value, minimum, maximum, step, tooltip=''):
-    variants = (
-        (title, variable_name, default_value, minimum, maximum, step),
-        (title, variable_name, minimum, maximum, default_value, step),
-        (title, variable_name, range(minimum, maximum + 1, step), default_value),
-    )
-    control = _try_template_calls('createStepper', variants, {'tooltip': tooltip})
-    if control is None:
-        options = [str(value) for value in range(minimum, maximum + 1, step)]
-        default_index = int(_clamp(default_value - minimum, 0, len(options) - 1))
-        control = make_dropdown(title, variable_name, options, default_index, tooltip=tooltip)
-    return control
-
-
 def build_settings_template():
     controls = []
-    controls.append(make_checkbox('Enable mod (master switch)', 'enabled', SETTINGS['enabled']))
-    controls.append(make_checkbox('Show current accuracy (dispersion line)', 'show_dispersion', SETTINGS['show_dispersion']))
-    controls.append(make_checkbox('Show remaining aim time (seconds line)', 'show_aim_time', SETTINGS['show_aim_time']))
-    controls.append(make_checkbox('Debug aim logging ([AIM_DEBUG] in python.log, throttled)', 'debug_aim_logging', SETTINGS.get('debug_aim_logging', False)))
-    controls.append(make_checkbox('Debug drag logging ([DRAG_DEBUG] in python.log, throttled)', 'debug_drag_logging', SETTINGS.get('debug_drag_logging', False)))
-    controls.append(make_option_dropdown('Font size (text size)', 'font_size', SETTINGS['font_size']))
-    controls.append(make_option_dropdown('Font (game font preset)', 'font_name', SETTINGS['font_name']))
-    controls.append(make_option_dropdown('Dispersion decimals (digits after dot)', 'decimal_dispersion', SETTINGS['decimal_dispersion']))
-    controls.append(make_option_dropdown('Aim time decimals (digits after dot)', 'decimal_aim_time', SETTINGS['decimal_aim_time']))
-    controls.append(make_option_dropdown('Line spacing (gap between the 2 lines)', 'line_spacing', SETTINGS['line_spacing']))
+    controls.append(make_checkbox(get_text('disable_drag'), 'disable_dragging', SETTINGS['disable_dragging']))
+    controls.append(make_checkbox(get_text('show_dispersion'), 'show_dispersion', SETTINGS['show_dispersion']))
+    controls.append(make_checkbox(get_text('show_aim_time'), 'show_aim_time', SETTINGS['show_aim_time']))
+    controls.append(make_checkbox(get_text('debug_aim'), 'debug_aim_logging', SETTINGS.get('debug_aim_logging', False)))
+    controls.append(make_checkbox(get_text('debug_drag'), 'debug_drag_logging', SETTINGS.get('debug_drag_logging', False)))
+    controls.append(make_option_dropdown(get_text('font_size'), 'font_size', SETTINGS['font_size']))
+    controls.append(make_option_dropdown(get_text('font_name'), 'font_name', SETTINGS['font_name']))
+    controls.append(make_option_dropdown(get_text('dec_disp'), 'decimal_dispersion', SETTINGS['decimal_dispersion']))
+    controls.append(make_option_dropdown(get_text('dec_aim'), 'decimal_aim_time', SETTINGS['decimal_aim_time']))
+    controls.append(make_option_dropdown(get_text('line_space'), 'line_spacing', SETTINGS['line_spacing']))
     controls.append(make_option_dropdown(
-        'HUD update interval (seconds; 0 = every frame)',
+        get_text('hud_interval'),
         'display_update_interval',
         SETTINGS.get('display_update_interval', DEFAULT_SETTINGS['display_update_interval']),
     ))
     controls.append(make_mods_color_choice(
-        'Text color',
+        get_text('text_color'),
         'text_color_hex',
         SETTINGS.get('text_color_hex', DEFAULT_SETTINGS['text_color_hex']),
-        tooltip='RGB color of the HUD text (use Text alpha for opacity).',
     ))
     controls.append(make_mods_slider_dict(
-        'Text alpha',
+        get_text('text_alpha'),
         'text_alpha',
         SETTINGS.get('text_alpha', DEFAULT_SETTINGS['text_alpha']),
-        0.0,
-        1.0,
-        0.01,
-        tooltip='Opacity: 0 = invisible, 1 = fully opaque.',
+        0.0, 1.0, 0.01,
     ))
     controls.append(make_mods_checkbox_dict(
-        'Draw text shadow',
+        get_text('draw_shadow'),
         'text_shadow',
         SETTINGS.get('text_shadow', DEFAULT_SETTINGS['text_shadow']),
-        tooltip='When enabled, draws a dark offset copy behind the text (gambiter HUD only).',
     ))
     controls.append(make_mods_slider_dict(
-        'Text shadow alpha',
+        get_text('shadow_alpha'),
         'text_shadow_alpha',
         SETTINGS.get('text_shadow_alpha', DEFAULT_SETTINGS['text_shadow_alpha']),
-        0.0,
-        1.0,
-        0.01,
-        tooltip='Shadow opacity multiplier (0 = no visible shadow, 1 = strongest).',
+        0.0, 1.0, 0.01,
     ))
 
     filtered_controls = [control for control in controls if control is not None]
     mid = (len(filtered_controls) + 1) // 2
     return {
         'modDisplayName': MOD_NAME,
-        'enabled': SETTINGS['enabled'],
+        'enabled': True,
         'column1': filtered_controls[:mid],
         'column2': filtered_controls[mid:],
     }
@@ -1936,6 +1896,13 @@ def register_mod_settings():
         return
 
     SETTINGS_TEMPLATE = build_settings_template()
+    
+    try:
+        if hasattr(g_modsSettingsApi, 'onWindowClosed'):
+            g_modsSettingsApi.updateModSettings(MOD_ID, {})
+    except Exception:
+        pass
+
     try:
         saved_settings = g_modsSettingsApi.getModSettings(MOD_ID, SETTINGS_TEMPLATE)
     except Exception:
@@ -1951,7 +1918,6 @@ def register_mod_settings():
             g_modsSettingsApi.registerCallback(MOD_ID, on_settings_changed)
         except Exception:
             pass
-        log('ModSettingsAPI settings loaded.')
         return
 
     try:
@@ -1962,7 +1928,6 @@ def register_mod_settings():
             SETTINGS = sanitize_settings(patched_settings)
             save_config()
             apply_runtime_settings()
-        log('ModSettingsAPI template registered.')
     except Exception:
         LOG_CURRENT_EXCEPTION()
 
@@ -1987,7 +1952,7 @@ def register_mods_list():
         g_modsListApi.addModification(
             id=MOD_ID,
             name=MOD_NAME,
-            description='Shows realtime dispersion and aim time remaining near the crosshair.',
+            description=get_text('mod_desc'),
             icon='',
             enabled=True,
             login=False,
@@ -1997,7 +1962,6 @@ def register_mods_list():
     except Exception:
         LOG_CURRENT_EXCEPTION()
         return
-    log('ModsListAPI registered.')
 
 
 def install_hooks():
@@ -2017,8 +1981,6 @@ def install_hooks():
 
 
 def init():
-    # The game imports this module and then calls init(), so the module level
-    # init() call below would otherwise run the whole setup twice.
     global MOD_INITIALIZED
     if MOD_INITIALIZED:
         return
@@ -2028,7 +1990,6 @@ def init():
     install_hooks()
     _HUD_DRAG.install()
     register_mod_settings()
-    register_mods_list()
     apply_runtime_settings()
     log('Loaded successfully.')
 
