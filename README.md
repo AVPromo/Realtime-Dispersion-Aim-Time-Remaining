@@ -58,6 +58,12 @@ Every key below is also editable in-game through **ModSettingsAPI**:
 
 ### 1.1.5
 
+- Translation support has been added (including multiple languages: Russian, Ukrainian, Czech, French, Polish, German, and Spanish).
+- The settings option for toggling the mod on or off has been removed (as it duplicated the built-in function).
+- A setting has been added to disable mouse dragging, allowing the indicator's position to be locked.
+
+### 1.1.5
+
 - Fix WoT `2.4.0.0` compatibility: the client changed `AvatarInputHandler.handleMouseEvent(dx, dy, dz)` into `handleMouseEvent(event)`, which made the mod's hook raise before forwarding the call and left the mouse unable to steer the vehicle or camera in battle.
 - Forward every hooked client call with `*args`/`**kwargs` so a future signature change degrades the HUD instead of breaking the client.
 - Update the target game version to WoT `2.4.0.0`.
