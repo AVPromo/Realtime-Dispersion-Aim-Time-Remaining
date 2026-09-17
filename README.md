@@ -56,7 +56,7 @@ Every key below is also editable in-game through **ModSettingsAPI**:
 
 ## Changelog
 
-### 1.1.5
+### 1.2.0
 
 - Translation support has been added (including multiple languages: Russian, Ukrainian, Czech, French, Polish, German, and Spanish).
 - The settings option for toggling the mod on or off has been removed (as it duplicated the built-in function).
