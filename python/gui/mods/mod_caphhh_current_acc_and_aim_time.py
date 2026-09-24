@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # SPDX-License-Identifier: GPL-3.0-only
 # Copyright (C) 2026 Walaxy <wlx0414@foxmail.com>
+
 import copy
 import json
 import math
@@ -64,7 +65,7 @@ except ImportError:
     g_modsSettingsApi = None
     templates = None
 
-# --- СЛОВАРЬ ЛОКАЛИЗАЦИИ ---
+# --- ЛОКАЛИЗАЦИЯ ---
 LOCALIZATION = {
     'en': {
         'disable_drag': 'Disable mouse dragging',
@@ -255,9 +256,9 @@ def _caphhh_resolve_aiming_time_seconds(avatar):
         for idx in (5, 4):
             try:
                 if len(di) > idx:
-                    v = float(di[idx])
-                    if v > 0.0:
-                        return v
+                    value = float(di[idx])
+                    if value > 0.0:
+                        return value
             except Exception:
                 pass
 
@@ -267,13 +268,13 @@ def _caphhh_resolve_aiming_time_seconds(avatar):
             gun = getattr(descr, 'gun', None)
             if gun is not None:
                 for key in ('aimingTime', 'aimTime'):
-                    v = getattr(gun, key, None)
-                    if v is None:
-                        v = _caphhh_get_value(gun, key)
-                    if v is not None:
-                        fv = float(v)
-                        if fv > 0.0:
-                            return fv
+                    value = getattr(gun, key, None)
+                    if value is None:
+                        value = _caphhh_get_value(gun, key)
+                    if value is not None:
+                        value = float(value)
+                        if value > 0.0:
+                            return value
         except Exception:
             pass
     return 0.0
@@ -464,7 +465,7 @@ def _drag_debug_log(message, force=False):
 
 MOD_ID = 'caphhh.realtimeDispersionAimTimeRemaining'
 MOD_NAME = 'Realtime Dispersion & Aim Time Remaining'
-MOD_VERSION = '1.2.0'
+MOD_VERSION = '1.2.2'
 CONFIG_FOLDER_NAME = 'RealtimeDispersion&AimTimeRemaining'
 CONFIG_RELATIVE_PATH = os.path.join('mods', 'configs', CONFIG_FOLDER_NAME, 'config.json')
 LEGACY_CONFIG_RELATIVE_PATHS = (
@@ -638,11 +639,9 @@ def sanitize_settings(raw_settings):
     if isinstance(raw_settings, dict):
         data.update(raw_settings)
 
-    # Автоматически переносим значение из старого "enabled", если новый ключ отсутствует
     if 'enabled' in raw_keys and 'disable_dragging' not in raw_keys:
         data['disable_dragging'] = not _to_bool(raw_settings.get('enabled'), True)
 
-    # Принудительно вычищаем "enabled" из текущих рабочих настроек в памяти
     if 'enabled' in data:
         del data['enabled']
 
@@ -796,14 +795,12 @@ def save_config():
     config_path = get_config_path()
     try:
         ensure_config_directory()
-        
-        # Делаем копию настроек перед записью на диск, чтобы не повредить данные в игре
+
         clean_settings = copy.deepcopy(SETTINGS)
-        
-        # Принудительно удаляем старый ключ "enabled" из файла json перед сохранением
+
         if "enabled" in clean_settings:
             del clean_settings["enabled"]
-            
+
         config_file = open(config_path, 'w')
         try:
             json.dump(clean_settings, config_file, indent=4, sort_keys=True)
@@ -877,7 +874,6 @@ class CrosshairTextRenderer(object):
             int(round(SETTINGS['font_size'])),
             text,
         )
-
 
     def _guiflash_base_props(self, html, x_position, y_position, alpha_override=None, z_index=None):
         props = {
@@ -983,7 +979,6 @@ class CrosshairTextRenderer(object):
         self._delete_guiflash_one(alias)
         self._delete_guiflash_one(alias + '_shadow')
 
-
     def _create_label(self):
         if self._is_guiflash_ready():
             return True
@@ -1060,7 +1055,6 @@ class CrosshairTextRenderer(object):
             self._safe_set(label, 'colour', tuple(SETTINGS['color']))
             self._safe_set(label, 'shadow', SETTINGS.get('text_shadow', True))
 
-
     def _hud_label_centers_pixels(self):
         sw = 1920
         sh = 1080
@@ -1094,12 +1088,15 @@ class CrosshairTextRenderer(object):
         if self._is_guiflash_ready():
             half_w *= 1.4
             half_h *= 1.4
-        ys = [c for c in centers]
-        cx = centers
+
+        xs = [point[0] for point in centers]
+        ys = [point[1] for point in centers]
+
+        left = min(xs) - half_w
+        right = max(xs) + half_w
         top = min(ys) - half_h
         bottom = max(ys) + half_h
-        left = cx - half_w
-        right = cx + half_w
+
         return left <= mx <= right and top <= my <= bottom
 
     def _set_label_state(self, label, text, line_index):
@@ -1235,7 +1232,6 @@ class _HudDragController(object):
     def _is_left_pressed(self):
         return self._is_key_down(getattr(Keys, 'KEY_LEFTMOUSE', None))
 
-
     def _begin_drag(self, mx, my, reason, dx, dy):
         if SETTINGS.get('disable_dragging', False):
             return
@@ -1246,12 +1242,12 @@ class _HudDragController(object):
         self._drag_offset_x_key, self._drag_offset_y_key = _get_active_offset_keys()
         self._drag_start_offset_x = _clamp(
             _to_float(SETTINGS.get(self._drag_offset_x_key, SETTINGS.get('offset_x', DEFAULT_SETTINGS['offset_x'])),
-                     DEFAULT_SETTINGS['offset_x']),
+                      DEFAULT_SETTINGS['offset_x']),
             -0.5, 0.5
         )
         self._drag_start_offset_y = _clamp(
             _to_float(SETTINGS.get(self._drag_offset_y_key, SETTINGS.get('offset_y', DEFAULT_SETTINGS['offset_y'])),
-                     DEFAULT_SETTINGS['offset_y']),
+                      DEFAULT_SETTINGS['offset_y']),
             -0.5, 0.5
         )
         self._dragging = True
@@ -1896,7 +1892,7 @@ def register_mod_settings():
         return
 
     SETTINGS_TEMPLATE = build_settings_template()
-    
+
     try:
         if hasattr(g_modsSettingsApi, 'onWindowClosed'):
             g_modsSettingsApi.updateModSettings(MOD_ID, {})
