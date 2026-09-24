@@ -65,7 +65,7 @@ except ImportError:
     g_modsSettingsApi = None
     templates = None
 
-# --- ЛОКАЛИЗАЦИЯ ---
+
 LOCALIZATION = {
     'en': {
         'disable_drag': 'Disable mouse dragging',
@@ -384,6 +384,7 @@ def _caphhh_get_stationary_ideal_from_result(avatar, dispersion_result, turret_r
 def _caphhh_compute_aim_time(aiming_time, current_angles, ideal_angle):
     if aiming_time <= 0.0 or ideal_angle is None or ideal_angle <= 1e-12:
         return 0.0
+
     best = 0.0
     for ca in current_angles:
         try:
@@ -396,8 +397,10 @@ def _caphhh_compute_aim_time(aiming_time, current_angles, ideal_angle):
             continue
         ratio = cur / ideal_angle
         if ratio > 1.0:
-            best = max(best, aiming_time * math.log(ratio))
-    return max(best, 0.0)
+            remaining = aiming_time * math.log(ratio)
+            best = max(best, remaining)
+
+    return _clamp(best, 0.0, aiming_time)
 
 
 def reset_floor_tracker():
@@ -416,6 +419,19 @@ _last_display_update_time = None
 _last_hud_dispersion = 0.0
 _last_hud_aim_time = 0.0
 
+# --- performance improvements ---
+_HOT_PATH_INTERVAL = 1.0 / 60.0
+_LAST_HOT_PATH_TIME = -9999.0
+
+_SCREEN_SIZE = (1920, 1080)
+_LAST_SCREEN_SIZE_CHECK = -9999.0
+
+_LAST_CTRL_MODE = ''
+_LAST_CTRL_MODE_CHECK = -9999.0
+_ACTIVE_OFFSET_KEYS = ('offset_x_arcade', 'offset_y_arcade')
+
+_LAST_ERROR_TIME = {}
+
 
 def _now_display_clock():
     if BigWorld is not None:
@@ -425,6 +441,64 @@ def _now_display_clock():
             pass
     import time
     return time.time()
+
+
+def _get_screen_size():
+    global _SCREEN_SIZE, _LAST_SCREEN_SIZE_CHECK
+    now = _now_display_clock()
+    if now - _LAST_SCREEN_SIZE_CHECK < 1.0:
+        return _SCREEN_SIZE
+
+    _LAST_SCREEN_SIZE_CHECK = now
+
+    if BigWorld is not None:
+        try:
+            _SCREEN_SIZE = (
+                max(1, int(BigWorld.screenWidth())),
+                max(1, int(BigWorld.screenHeight()))
+            )
+        except Exception:
+            pass
+
+    return _SCREEN_SIZE
+
+
+def _should_update_hot_path():
+    global _LAST_HOT_PATH_TIME
+    now = _now_display_clock()
+    if now - _LAST_HOT_PATH_TIME < _HOT_PATH_INTERVAL:
+        return False
+    _LAST_HOT_PATH_TIME = now
+    return True
+
+
+def _get_active_offset_keys():
+    global _LAST_CTRL_MODE, _LAST_CTRL_MODE_CHECK, _ACTIVE_OFFSET_KEYS
+
+    now = _now_display_clock()
+    if now - _LAST_CTRL_MODE_CHECK >= 0.1:
+        _LAST_CTRL_MODE_CHECK = now
+        mode_name = _get_ctrl_mode_name()
+        if 'sniper' in str(mode_name or '').lower():
+            _ACTIVE_OFFSET_KEYS = ('offset_x_sniper', 'offset_y_sniper')
+        else:
+            _ACTIVE_OFFSET_KEYS = ('offset_x_arcade', 'offset_y_arcade')
+        _LAST_CTRL_MODE = str(mode_name or '').lower()
+
+    return _ACTIVE_OFFSET_KEYS
+
+
+def _format_number(value, decimals):
+    return ('%%.%df' % int(decimals)) % float(value)
+
+
+def log_exception_throttled(name, interval=5.0):
+    now = _now_display_clock()
+    last = _LAST_ERROR_TIME.get(name, -9999.0)
+    if now - last < interval:
+        return
+    _LAST_ERROR_TIME[name] = now
+    LOG_CURRENT_EXCEPTION()
 
 
 def _reset_aiming_runtime():
@@ -465,7 +539,7 @@ def _drag_debug_log(message, force=False):
 
 MOD_ID = 'caphhh.realtimeDispersionAimTimeRemaining'
 MOD_NAME = 'Realtime Dispersion & Aim Time Remaining'
-MOD_VERSION = '1.2.2'
+MOD_VERSION = '1.2.4'
 CONFIG_FOLDER_NAME = 'RealtimeDispersion&AimTimeRemaining'
 CONFIG_RELATIVE_PATH = os.path.join('mods', 'configs', CONFIG_FOLDER_NAME, 'config.json')
 LEGACY_CONFIG_RELATIVE_PATHS = (
@@ -726,12 +800,6 @@ def _is_sniper_mode():
     return 'sniper' in mode_name
 
 
-def _get_active_offset_keys():
-    if _is_sniper_mode():
-        return 'offset_x_sniper', 'offset_y_sniper'
-    return 'offset_x_arcade', 'offset_y_arcade'
-
-
 def _get_active_offsets():
     x_key, y_key = _get_active_offset_keys()
     return (
@@ -795,12 +863,9 @@ def save_config():
     config_path = get_config_path()
     try:
         ensure_config_directory()
-
         clean_settings = copy.deepcopy(SETTINGS)
-
         if "enabled" in clean_settings:
             del clean_settings["enabled"]
-
         config_file = open(config_path, 'w')
         try:
             json.dump(clean_settings, config_file, indent=4, sort_keys=True)
@@ -835,6 +900,7 @@ class CrosshairTextRenderer(object):
         self._dispersion_label = None
         self._aim_time_label = None
         self._guiflash_created = set()
+        self._guiflash_last_props = {}
         self._backend_logged = False
         self._first_update_logged = False
         self._guiflash_failure_logged = False
@@ -898,14 +964,7 @@ class CrosshairTextRenderer(object):
         return props
 
     def _pixel_position_for_line(self, line_index):
-        screen_width = 1920
-        screen_height = 1080
-        if BigWorld is not None:
-            try:
-                screen_width = max(1, int(BigWorld.screenWidth()))
-                screen_height = max(1, int(BigWorld.screenHeight()))
-            except Exception:
-                pass
+        screen_width, screen_height = _get_screen_size()
         offset_x, offset_y = _get_active_offsets()
         x_position = int(offset_x * screen_width)
         y_position = int((offset_y * screen_height) + (SETTINGS['line_spacing'] * screen_height * line_index))
@@ -914,9 +973,15 @@ class CrosshairTextRenderer(object):
     def _put_guiflash_component(self, alias, props):
         if not self._is_guiflash_ready():
             return
+
+        prev = self._guiflash_last_props.get(alias)
+        if prev == props:
+            return
+
         if alias in self._guiflash_created:
             try:
                 g_guiFlash.updateComponent(alias, props, None)
+                self._guiflash_last_props[alias] = copy.deepcopy(props)
                 return
             except Exception:
                 try:
@@ -924,9 +989,12 @@ class CrosshairTextRenderer(object):
                 except Exception:
                     pass
                 self._guiflash_created.discard(alias)
+                self._guiflash_last_props.pop(alias, None)
+
         try:
             g_guiFlash.createComponent(alias, COMPONENT_TYPE.LABEL, props)
             self._guiflash_created.add(alias)
+            self._guiflash_last_props[alias] = copy.deepcopy(props)
         except Exception:
             pass
 
@@ -940,6 +1008,7 @@ class CrosshairTextRenderer(object):
         except Exception:
             pass
         self._guiflash_created.discard(alias)
+        self._guiflash_last_props.pop(alias, None)
 
     def _create_or_update_guiflash_label(self, alias, text, line_index):
         if not self._is_guiflash_ready():
@@ -1043,6 +1112,7 @@ class CrosshairTextRenderer(object):
         self._remove_label(self._aim_time_label)
         self._dispersion_label = None
         self._aim_time_label = None
+        self._guiflash_last_props = {}
 
     def apply_settings(self):
         if self._is_guiflash_ready():
@@ -1056,25 +1126,18 @@ class CrosshairTextRenderer(object):
             self._safe_set(label, 'shadow', SETTINGS.get('text_shadow', True))
 
     def _hud_label_centers_pixels(self):
-        sw = 1920
-        sh = 1080
-        if BigWorld is not None:
-            try:
-                sw = max(1, int(BigWorld.screenWidth()))
-                sh = max(1, int(BigWorld.screenHeight()))
-            except Exception:
-                pass
+        screen_width, screen_height = _get_screen_size()
         centers = []
         line_index = 0
         offset_x, offset_y = _get_active_offsets()
         if SETTINGS.get('show_dispersion', True):
-            cx = int((sw * 0.5) + (offset_x * sw))
-            cy = int((sh * 0.5) + (offset_y * sh) + (SETTINGS['line_spacing'] * sh * line_index))
+            cx = int((screen_width * 0.5) + (offset_x * screen_width))
+            cy = int((screen_height * 0.5) + (offset_y * screen_height) + (SETTINGS['line_spacing'] * screen_height * line_index))
             centers.append((cx, cy))
             line_index += 1
         if SETTINGS.get('show_aim_time', True):
-            cx = int((sw * 0.5) + (offset_x * sw))
-            cy = int((sh * 0.5) + (offset_y * sh) + (SETTINGS['line_spacing'] * sh * line_index))
+            cx = int((screen_width * 0.5) + (offset_x * screen_width))
+            cy = int((screen_height * 0.5) + (offset_y * screen_height) + (SETTINGS['line_spacing'] * screen_height * line_index))
             centers.append((cx, cy))
         return centers
 
@@ -1103,15 +1166,7 @@ class CrosshairTextRenderer(object):
         if label is None:
             return
 
-        screen_width = 1920
-        screen_height = 1080
-        if BigWorld is not None:
-            try:
-                screen_width = max(1, int(BigWorld.screenWidth()))
-                screen_height = max(1, int(BigWorld.screenHeight()))
-            except Exception:
-                pass
-
+        screen_width, screen_height = _get_screen_size()
         offset_x, offset_y = _get_active_offsets()
         x_position = int((screen_width * 0.5) + (offset_x * screen_width))
         y_position = int((screen_height * 0.5) + (offset_y * screen_height) + (SETTINGS['line_spacing'] * screen_height * line_index))
@@ -1138,9 +1193,9 @@ class CrosshairTextRenderer(object):
 
         visible_texts = []
         if SETTINGS['show_dispersion']:
-            visible_texts.append(('dispersion', ('%%.%df' % SETTINGS['decimal_dispersion']) % dispersion))
+            visible_texts.append(('dispersion', _format_number(dispersion, SETTINGS['decimal_dispersion'])))
         if SETTINGS['show_aim_time']:
-            visible_texts.append(('aim_time', ('%%.%df' % SETTINGS['decimal_aim_time']) % aim_time_remaining + '&nbsp;' + get_text('sec_suffix')))
+            visible_texts.append(('aim_time', _format_number(aim_time_remaining, SETTINGS['decimal_aim_time']) + '&nbsp;' + get_text('sec_suffix')))
         if not visible_texts:
             self.hide()
             return
@@ -1356,10 +1411,10 @@ class _HudDragController(object):
             return
 
         try:
-            sw = max(1, int(BigWorld.screenWidth()))
-            sh = max(1, int(BigWorld.screenHeight()))
+            screen_width, screen_height = _get_screen_size()
         except Exception:
             return
+
         try:
             mx_now, my_now = cursor.position
             px_now, py_now = self._cursor_to_screen_pixels(mx_now, my_now)
@@ -1368,11 +1423,11 @@ class _HudDragController(object):
                 self._drag_start_py = py_now
             delta_px = px_now - self._drag_start_px
             delta_py = py_now - self._drag_start_py
-            new_x = self._drag_start_offset_x + (delta_px / float(sw))
-            new_y = self._drag_start_offset_y + (delta_py / float(sh))
+            new_x = self._drag_start_offset_x + (delta_px / float(screen_width))
+            new_y = self._drag_start_offset_y + (delta_py / float(screen_height))
         except Exception:
-            new_x = _to_float(SETTINGS.get(self._drag_offset_x_key, SETTINGS.get('offset_x', 0.0)), 0.0) + (float(dx) / float(sw))
-            new_y = _to_float(SETTINGS.get(self._drag_offset_y_key, SETTINGS.get('offset_y', 0.0)), 0.0) + (float(dy) / float(sh))
+            new_x = _to_float(SETTINGS.get(self._drag_offset_x_key, SETTINGS.get('offset_x', 0.0)), 0.0) + (float(dx) / float(screen_width))
+            new_y = _to_float(SETTINGS.get(self._drag_offset_y_key, SETTINGS.get('offset_y', 0.0)), 0.0) + (float(dy) / float(screen_height))
         _set_offsets_for_keys(self._drag_offset_x_key, self._drag_offset_y_key, new_x, new_y)
         try:
             RENDERER.update(_last_hud_dispersion, _last_hud_aim_time)
@@ -1462,7 +1517,14 @@ def _is_player_vehicle_update(avatar, vehicle_id):
         return False
 
 
+_HUD_CLEARED = False
+
+
 def _clear_own_vehicle_hud():
+    global _HUD_CLEARED
+    if _HUD_CLEARED:
+        return
+    _HUD_CLEARED = True
     try:
         _HUD_DRAG.end_drag(save=True)
         _reset_aiming_runtime()
@@ -1540,19 +1602,24 @@ def _caphhh_positional(args, kwargs, index, name, default=None):
 def hook_get_own_vehicle_shot_dispersion_angle(original, self, *args, **kwargs):
     result = original(self, *args, **kwargs)
     try:
+        if not _should_update_hot_path():
+            return result
+
         turret_rotation_speed = _caphhh_positional(args, kwargs, 0, 'turretRotationSpeed', 0.0)
         with_shot = _caphhh_positional(args, kwargs, 1, 'withShot', 0)
         if not _is_avatar_vehicle_alive(self):
             _clear_own_vehicle_hud()
             return result
+
         current_dispersion = float(result[0]) * 100.0
         aim_time_remaining = calculate_aim_time_remaining(self, result, turret_rotation_speed, with_shot)
+
         global _last_hud_dispersion, _last_hud_aim_time
         _last_hud_dispersion = current_dispersion
         _last_hud_aim_time = aim_time_remaining
         update_display(self, current_dispersion, aim_time_remaining)
     except Exception:
-        LOG_CURRENT_EXCEPTION()
+        log_exception_throttled('hook_get_own_vehicle_shot_dispersion_angle')
     return result
 
 
@@ -1564,7 +1631,7 @@ def hook_update_vehicle_health(original, self, *args, **kwargs):
         if _is_player_vehicle_update(self, vehicle_id) and _health_update_means_dead(health, is_crew_active):
             _clear_own_vehicle_hud()
     except Exception:
-        LOG_CURRENT_EXCEPTION()
+        log_exception_throttled('hook_update_vehicle_health')
     return original(self, *args, **kwargs)
 
 
@@ -1617,19 +1684,21 @@ def hook_update_targeting_info(original, self, *args, **kwargs):
             AIMING_RUNTIME['ideal_dispersion'] = base * mult
             AIMING_RUNTIME['aiming_time'] = atime
     except Exception:
-        LOG_CURRENT_EXCEPTION()
+        log_exception_throttled('hook_update_targeting_info')
     return result
 
 
 def hook_on_become_player(original, self, *args, **kwargs):
+    global _HUD_CLEARED
     result = original(self, *args, **kwargs)
     try:
+        _HUD_CLEARED = False
         _reset_aiming_runtime()
         reset_floor_tracker()
         RENDERER.ensure()
         RENDERER.hide()
     except Exception:
-        LOG_CURRENT_EXCEPTION()
+        log_exception_throttled('hook_on_become_player')
     return result
 
 
@@ -1637,7 +1706,7 @@ def hook_on_become_non_player(original, self, *args, **kwargs):
     try:
         _clear_own_vehicle_hud()
     except Exception:
-        LOG_CURRENT_EXCEPTION()
+        log_exception_throttled('hook_on_become_non_player')
     return original(self, *args, **kwargs)
 
 
@@ -1647,7 +1716,7 @@ def hook_destroy(original, self, *args, **kwargs):
         if self is player:
             _clear_own_vehicle_hud()
     except Exception:
-        LOG_CURRENT_EXCEPTION()
+        log_exception_throttled('hook_destroy')
     return original(self, *args, **kwargs)
 
 
@@ -1681,7 +1750,7 @@ def hook_avatar_handle_mouse_event(original, self, *args, **kwargs):
         dx, dy, dz = deltas
         _HUD_DRAG.on_mouse_delta(dx, dy)
     except Exception:
-        LOG_CURRENT_EXCEPTION()
+        log_exception_throttled('hook_avatar_handle_mouse_event')
     return result
 
 
